@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.venere.com/XHI"
+                  xmlns:xhi="http://www.venere.com/XHI"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  name="XHI_Ping" xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- Define data types (import XHI schemas) -->
+  <wsdl:types>
+    <xs:schema>
+      <xs:import namespace="http://www.venere.com/XHI"
+                 schemaLocation="Venere_Extensions.xsd"/>
+    </xs:schema>
+    <xs:schema>
+      <xs:import namespace="http://www.venere.com/XHI"
+                 schemaLocation="XHI_PingRQ.xsd"/>
+    </xs:schema>
+    <xs:schema>
+      <xs:import namespace="http://www.venere.com/XHI"
+                 schemaLocation="XHI_PingRS.xsd"/>
+    </xs:schema>
+  </wsdl:types>
+
+  <!-- Define request and response messages-->
+  <wsdl:message name="XHI_Authentication">
+    <wsdl:part name="XHI_Ping_Auth" element="xhi:Authentication"/>
+  </wsdl:message>
+  <wsdl:message name="XHI_ManagementDetails">
+    <wsdl:part name="XHI_Ping_MgmDetails" element="xhi:ManagementDetails"/>
+  </wsdl:message>
+  <wsdl:message name="XHI_TransactionData">
+    <wsdl:part name="XHI_Ping_TransData" element="xhi:TransactionData"/>
+  </wsdl:message>
+  <wsdl:message name="XHI_Ping_Request">
+    <wsdl:part name="XHI_Ping_Req" element="xhi:XHI_PingRQ"/>
+  </wsdl:message>
+  <wsdl:message name="XHI_Ping_Response">
+    <wsdl:part name="XHI_Ping_Res" element="xhi:XHI_PingRS"/>
+  </wsdl:message>
+
+  <!-- Define operation and reference messages-->
+  <wsdl:portType name="XHI_Ping_PortType">
+    <wsdl:operation name="XHI_Ping_Request">
+      <wsdl:input message="xhi:XHI_Ping_Request"/>
+      <wsdl:output message="xhi:XHI_Ping_Response"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <!-- Define SOAP binding-->
+  <wsdl:binding name="XHI_Ping_Binding" type="xhi:XHI_Ping_PortType">
+    <!-- Use document style and not rpc-->
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="XHI_Ping_Request">
+      <!-- Use 'literal' to include XHI XML as-is-->
+      <soap:operation soapAction="XHI_Ping" style="document"/>
+      <wsdl:input>
+        <soap:header part="XHI_Ping_Auth" message="xhi:XHI_Authentication" use="literal"/>
+        <soap:header part="XHI_Ping_MgmDetails" message="xhi:XHI_ManagementDetails" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:header part="XHI_Ping_TransData" message="xhi:XHI_TransactionData" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <!-- Define SOAP interface with previously declared binding-->
+  <wsdl:service name="XHI_Ping">
+    <wsdl:port name="XHI_Ping_Port" binding="xhi:XHI_Ping_Binding">
+      <soap:address location="https://b2b-uat.venere.com/xhi-1.0/services/XHI_Ping.soap"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>
